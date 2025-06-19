@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程式概念考試系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .exam-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .exam-content {
+            padding: 40px;
+        }
+
+        .question-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .question {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-number {
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .options {
+            margin-top: 15px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: #e3f2fd;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .option label {
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #34495e;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .results {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.3);
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .answers {
+            background: white;
+            color: #2c3e50;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .answer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .answer-item:last-child {
+            border-bottom: none;
+        }
+
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .incorrect {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .code-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(142, 68, 173, 0.4);
+            transition: all 0.3s ease;
+            font-size: 24px;
+        }
+
+        .code-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(142, 68, 173, 0.6);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #2c3e50;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close {
+            color: #bdc3c7;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        .code-content {
+            background: #2c3e50;
+            color: #f8f9fa;
+            padding: 0;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .code-block {
+            background: #34495e;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .exam-content {
+                padding: 20px;
+            }
+            
+            .question {
+                padding: 20px;
+            }
+            
+            .code-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>程式概念考試系統</h1>
+            <div class="exam-info">
+                <div>總題數：9題</div>
+                <div>每題：10分</div>
+                <div>總分：90分</div>
+            </div>
+        </div>
+
+        <div class="exam-content">
+            <div id="exam-form">
+                <!-- Vibe Coding Section -->
+                <div class="question-section">
+                    <div class="section-title">🎨 Vibe Coding (氛圍編碼)</div>
+                    
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">1</span>
+                            Vibe Coding 強調的是程式設計師在寫程式時的什麼？
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q1a" name="q1" value="A">
+                                <label for="q1a">程式執行效率</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q1b" name="q1" value="B">
+                                <label for="q1b">情緒狀態和創作氛圍</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q1c" name="q1" value="C">
+                                <label for="q1c">程式碼的複雜度</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q1d" name="q1" value="D">
+                                <label for="q1d">團隊合作能力</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">2</span>
+                            在 Vibe Coding 的概念中，程式設計師應該根據當下的心情來選擇適合的程式語言或開發工具。
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q2a" name="q2" value="True">
+                                <label for="q2a">是</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q2b" name="q2" value="False">
+                                <label for="q2b">否</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">3</span>
+                            Vibe Coding 認為程式設計是一種純理性的活動，不應該受到情感因素影響。
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q3a" name="q3" value="True">
+                                <label for="q3a">是</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q3b" name="q3" value="False">
+                                <label for="q3b">否</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MCP Section -->
+                <div class="question-section">
+                    <div class="section-title">🔗 MCP (Model Context Protocol)</div>
+                    
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">4</span>
+                            MCP (Model Context Protocol) 的主要目的是什麼？
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q4a" name="q4" value="A">
+                                <label for="q4a">提高模型訓練速度</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q4b" name="q4" value="B">
+                                <label for="q4b">標準化 AI 模型與外部系統的互動方式</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q4c" name="q4" value="C">
+                                <label for="q4c">壓縮模型檔案大小</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q4d" name="q4" value="D">
+                                <label for="q4d">加密模型數據</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">5</span>
+                            MCP 允許 AI 模型直接訪問資料庫、API 和其他外部資源，而不需要額外的中介層。
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q5a" name="q5" value="True">
+                                <label for="q5a">是</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q5b" name="q5" value="False">
+                                <label for="q5b">否</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">6</span>
+                            MCP 在以下哪個場景中最有價值？
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q6a" name="q6" value="A">
+                                <label for="q6a">模型離線推理</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q6b" name="q6" value="B">
+                                <label for="q6b">AI 助手與企業系統整合</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q6c" name="q6" value="C">
+                                <label for="q6c">模型訓練資料清理</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q6d" name="q6" value="D">
+                                <label for="q6d">模型參數調整</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent 2 Agent Section -->
+                <div class="question-section">
+                    <div class="section-title">🤖 Agent to Agent (代理對代理)</div>
+                    
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">7</span>
+                            Agent to Agent 通訊中最重要的特徵是什麼？
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q7a" name="q7" value="A">
+                                <label for="q7a">高速數據傳輸</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q7b" name="q7" value="B">
+                                <label for="q7b">自主協調與協作能力</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q7c" name="q7" value="C">
+                                <label for="q7c">數據加密技術</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q7d" name="q7" value="D">
+                                <label for="q7d">統一的介面設計</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">8</span>
+                            在 Agent to Agent 系統中，代理之間可以在沒有人類干預的情況下進行決策和執行任務。
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q8a" name="q8" value="True">
+                                <label for="q8a">是</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q8b" name="q8" value="False">
+                                <label for="q8b">否</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-number">9</span>
+                            Agent to Agent 通訊最適合應用在以下哪種情境？
+                        </div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q9a" name="q9" value="A">
+                                <label for="q9a">單一任務處理</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q9b" name="q9" value="B">
+                                <label for="q9b">複雜的多步驟自動化流程</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q9c" name="q9" value="C">
+                                <label for="q9c">資料備份作業</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q9d" name="q9" value="D">
+                                <label for="q9d">靜態網頁展示</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="submit-btn" onclick="submitExam()">提交考試</button>
+            </div>
+
+            <div id="results" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- Floating Code Button -->
+    <button class="code-btn" onclick="showCode()" title="查看原始碼">💻</button>
+
+    <!-- Modal for Source Code -->
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>程式原始碼</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="code-content">
+                <div class="code-block" id="sourceCode"></div>
+                <button class="copy-btn" onclick="copyCode()">複製程式碼</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 正確答案
+        const correctAnswers = {
+            q1: 'B',
+            q2: 'True',
+            q3: 'False',
+            q4: 'B',
+            q5: 'True',
+            q6: 'B',
+            q7: 'B',
+            q8: 'True',
+            q9: 'B'
+        };
+
+        // 題目描述（用於顯示結果）
+        const questionDescriptions = {
+            q1: 'Vibe Coding 強調的重點',
+            q2: 'Vibe Coding 與心情選擇工具',
+            q3: 'Vibe Coding 對情感因素的看法',
+            q4: 'MCP 的主要目的',
+            q5: 'MCP 訪問外部資源的能力',
+            q6: 'MCP 最有價值的應用場景',
+            q7: 'Agent to Agent 通訊的重要特徵',
+            q8: 'Agent to Agent 的自主決策能力',
+            q9: 'Agent to Agent 的最佳應用情境'
+        };
+
+        function submitExam() {
+            let score = 0;
+            let results = [];
+            
+            // 檢查每個問題的答案
+            for (let i = 1; i <= 9; i++) {
+                const questionName = 'q' + i;
+                const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
+                
+                if (selectedAnswer) {
+                    const userAnswer = selectedAnswer.value;
+                    const isCorrect = userAnswer === correctAnswers[questionName];
+                    
+                    if (isCorrect) {
+                        score += 10;
+                    }
+                    
+                    results.push({
+                        question: i,
+                        description: questionDescriptions[questionName],
+                        userAnswer: userAnswer,
+                        correctAnswer: correctAnswers[questionName],
+                        isCorrect: isCorrect
+                    });
+                } else {
+                    results.push({
+                        question: i,
+                        description: questionDescriptions[questionName],
+                        userAnswer: '未作答',
+                        correctAnswer: correctAnswers[questionName],
+                        isCorrect: false
+                    });
+                }
+            }
+            
+            displayResults(score, results);
+        }
+
+        function displayResults(score, results) {
+            const examForm = document.getElementById('exam-form');
+            const resultsDiv = document.getElementById('results');
+            
+            examForm.classList.add('hidden');
+            resultsDiv.classList.remove('hidden');
+            
+            let resultHTML = `
+                <div class="results">
+                    <h2>考試結果</h2>
+                    <div class="score">${score} / 90</div>
+                    <p>答對 ${results.filter(r => r.isCorrect).length} 題，答錯 ${results.filter(r => !r.isCorrect).length} 題</p>
+                    
+                    <div class="answers">
+                        <h3>詳細答案</h3>
+            `;
+            
+            results.forEach(result => {
+                const statusClass = result.isCorrect ? 'correct' : 'incorrect';
+                const statusText = result.isCorrect ? '✓ 正確' : '✗ 錯誤';
+                
+                resultHTML += `
+                    <div class="answer-item">
+                        <div>
+                            <strong>第 ${result.question} 題：</strong>${result.description}<br>
+                            <small>您的答案：${result.userAnswer} | 正確答案：${result.correctAnswer}</small>
+                        </div>
+                        <div class="${statusClass}">${statusText}</div>
+                    </div>
+                `;
+            });
+            
+            resultHTML += `
+                    </div>
+                    <button class="submit-btn" onclick="restartExam()">重新考試</button>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultHTML;
+        }
+
+        function restartExam() {
+            // 清除所有選項
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => radio.checked = false);
+            
+            // 顯示考試表單，隱藏結果
+            document.getElementById('exam-form').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            
+            // 滾動到頂部
+            window.scrollTo(0, 0);
+        }
+
+        function showCode() {
+            const modal = document.getElementById('codeModal');
+            const sourceCodeDiv = document.getElementById('sourceCode');
+            
+            // 獲取當前頁面的 HTML 源碼
+            const currentHTML = document.documentElement.outerHTML;
+            sourceCodeDiv.textContent = currentHTML;
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('codeModal').style.display = 'none';
+        }
+
+        function copyCode() {
+            const sourceCode = document.getElementById('sourceCode').textContent;
+            
+            navigator.clipboard.writeText(sourceCode).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '已複製！';
+                copyBtn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+                }, 2000);
+            }).catch(err => {
+                alert('複製失敗，請手動選取文字複製');
+            });
+        }
+
+        // 點擊模態窗口外部關閉
+        window.onclick = function(event) {
+            const modal = document.getElementById('codeModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
